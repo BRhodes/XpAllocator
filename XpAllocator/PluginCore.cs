@@ -124,7 +124,7 @@ namespace XpAllocator
                     if (parts.Length < 4) Util.WriteToChat($"Correct usage is /xpa set <skill> <weight> (i.e. /xpa set run .05");
                     if (!int.TryParse(parts[3], out var weight)) Util.WriteToChat($"{parts[3]} is not a valid weight");
 
-                    Globals.Config.SetWeight(parts[2], weight);
+                    //Globals.Config.SetWeight(parts[2], weight);
                     Globals.XpAllocator = new XpAllocator(Globals.Config);
                 }
                 if (verb == "weights")

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Drawing.Text;
 using System.Linq;
 using UtilityBelt.Service.Lib.Settings;
+using static XpAllocator.PlayerConfiguration;
+using UtilityBelt.Service.Views;
 
 namespace XpAllocator
 {
@@ -76,7 +78,7 @@ namespace XpAllocator
         int CurrentXp => TotalXpHook[_decalName];
         public Action<int> RaiseTraitDelegate { get; set; }
 
-        public int Weight => Globals.Config.Weights[_name];
+        public int Weight => Globals.Config.Weights[(int)Enum.Parse(typeof(traitIndex), _name)];
 
         public virtual double EffectiveWeight => CanBeRaised() ? Weight : 0;
 

@@ -6,6 +6,58 @@ namespace XpAllocator
 {
     internal class PlayerConfiguration
     {
+        public enum traitIndex
+        {
+            strength,
+            endurance,
+            coordination,
+            quickness,
+            focus,
+            self,
+            health,
+            stamina,
+            mana,
+            voidmagic,
+            heavyweapons,
+            lightweapons,
+            finesseweapons,
+            missileweapons,
+            warmagic,
+            twohandedcombat,
+            summoning,
+            meleedefense,
+            missiledefense,
+            magicdefense,
+            creatureenchantment,
+            itemenchantment,
+            lifemagic,
+            manaconversion,
+            run,
+            jump,
+            arcanelore,
+            healing,
+            shield,
+            dualwield,
+            recklessness,
+            sneakattack,
+            dirtyfighting,
+            leadership,
+            loyalty,
+            salvaging,
+            itemtinkering,
+            weapontinkering,
+            armortinkering,
+            magicitemtinkering,
+            fletching,
+            alchemy,
+            cooking,
+            lockpick,
+            assessperson,
+            deception,
+            assesscreature,
+        }
+
+
         public bool Enabled { get; set; }
 
         public long Reserve { get; set; }
@@ -16,14 +68,12 @@ namespace XpAllocator
 
         public long ReserveMax { get; set; }
 
-        public Dictionary<string, int> Weights { get; set; }
+        public int[] Weights { get; set; }
 
         public double Weight(string key)
         {
             key = key.ToLower();
-            if (Weights.ContainsKey(key))
-                return Weights[key];
-            return 0;
+            return Weights[(int)Enum.Parse(typeof(traitIndex), key)];
         }
 
         static public PlayerConfiguration Defaults()
@@ -36,90 +86,90 @@ namespace XpAllocator
             rv.ReservePercent = .2;
             rv.SkillBasedAttributeWeights = true;
 
-            rv.Weights = new Dictionary<string, int>();
+            rv.Weights = new int[(int)traitIndex.assesscreature+1];
 
             // attributes
-            rv.Weights["strength"] = 20;
-            rv.Weights["endurance"] = 0;
-            rv.Weights["coordination"] = 0;
-            rv.Weights["quickness"] = 0;
-            rv.Weights["focus"] = 0;
-            rv.Weights["self"] = 0;
+            rv.Weights[(int)traitIndex.strength] = 20;
+            rv.Weights[(int)traitIndex.endurance] = 0;
+            rv.Weights[(int)traitIndex.coordination] = 0;
+            rv.Weights[(int)traitIndex.quickness] = 0;
+            rv.Weights[(int)traitIndex.focus] = 0;
+            rv.Weights[(int)traitIndex.self] = 0;
 
             // vitals
-            rv.Weights["health"] = 030;
-            rv.Weights["stamina"] = 010;
-            rv.Weights["mana"] = 010;
+            rv.Weights[(int)traitIndex.health] = 030;
+            rv.Weights[(int)traitIndex.stamina] = 010;
+            rv.Weights[(int)traitIndex.mana] = 010;
 
             // primary attacks
-            rv.Weights["voidmagic"] = 100;
-            rv.Weights["heavyweapons"] = 100;
-            rv.Weights["lightweapons"] = 100;
-            rv.Weights["finesseweapons"] = 100;
-            rv.Weights["missileweapons"] = 100;
-            rv.Weights["warmagic"] = 100;
-            rv.Weights["twohandedcombat"] = 100;
-            rv.Weights["summoning"] = 100;
+            rv.Weights[(int)traitIndex.voidmagic] = 100;
+            rv.Weights[(int)traitIndex.heavyweapons] = 100;
+            rv.Weights[(int)traitIndex.lightweapons] = 100;
+            rv.Weights[(int)traitIndex.finesseweapons] = 100;
+            rv.Weights[(int)traitIndex.missileweapons] = 100;
+            rv.Weights[(int)traitIndex.warmagic] = 100;
+            rv.Weights[(int)traitIndex.twohandedcombat] = 100;
+            rv.Weights[(int)traitIndex.summoning] = 100;
 
             // defenses
-            rv.Weights["meleedefense"] = 50;
-            rv.Weights["missiledefense"] = 30;
-            rv.Weights["magicdefense"] = 30;
+            rv.Weights[(int)traitIndex.meleedefense] = 50;
+            rv.Weights[(int)traitIndex.missiledefense] = 30;
+            rv.Weights[(int)traitIndex.magicdefense] = 30;
 
             // magics
-            rv.Weights["creatureenchantment"] = 30;
-            rv.Weights["itemenchantment"] = 30;
-            rv.Weights["lifemagic"] = 40;
-            rv.Weights["manaconversion"] = 30;
+            rv.Weights[(int)traitIndex.creatureenchantment] = 30;
+            rv.Weights[(int)traitIndex.itemenchantment] = 30;
+            rv.Weights[(int)traitIndex.lifemagic] = 40;
+            rv.Weights[(int)traitIndex.manaconversion] = 30;
 
             // movement
-            rv.Weights["run"] = 10;
-            rv.Weights["jump"] = 10;
+            rv.Weights[(int)traitIndex.run] = 10;
+            rv.Weights[(int)traitIndex.jump] = 10;
 
             // lore
-            rv.Weights["arcanelore"] = 5;
+            rv.Weights[(int)traitIndex.arcanelore] = 5;
 
             // misc combat
-            rv.Weights["healing"] = 20;
-            rv.Weights["shield"] = 25;
-            rv.Weights["dualwield"] = 10;
-            rv.Weights["recklessness"] = 10;
-            rv.Weights["sneakattack"] = 10;
-            rv.Weights["dirtyfighting"] = 10;
+            rv.Weights[(int)traitIndex.healing] = 20;
+            rv.Weights[(int)traitIndex.shield] = 25;
+            rv.Weights[(int)traitIndex.dualwield] = 10;
+            rv.Weights[(int)traitIndex.recklessness] = 10;
+            rv.Weights[(int)traitIndex.sneakattack] = 10;
+            rv.Weights[(int)traitIndex.dirtyfighting] = 10;
 
             // misc useless
-            rv.Weights["leadership"] = 1;
-            rv.Weights["loyalty"] = 1;
+            rv.Weights[(int)traitIndex.leadership] = 1;
+            rv.Weights[(int)traitIndex.loyalty] = 1;
 
             // crafting
-            rv.Weights["salvaging"] = 10;
-            rv.Weights["itemtinkering"] = 10;
-            rv.Weights["weapontinkering"] = 10;
-            rv.Weights["armortinkering"] = 10;
-            rv.Weights["magicitemtinkering"] = 10;
-            rv.Weights["fletching"] = 15;
-            rv.Weights["alchemy"] = 5;
-            rv.Weights["cooking"] = 5;
-            rv.Weights["lockpick"] = 5;
+            rv.Weights[(int)traitIndex.salvaging] = 10;
+            rv.Weights[(int)traitIndex.itemtinkering] = 10;
+            rv.Weights[(int)traitIndex.weapontinkering] = 10;
+            rv.Weights[(int)traitIndex.armortinkering] = 10;
+            rv.Weights[(int)traitIndex.magicitemtinkering] = 10;
+            rv.Weights[(int)traitIndex.fletching] = 15;
+            rv.Weights[(int)traitIndex.alchemy] = 5;
+            rv.Weights[(int)traitIndex.cooking] = 5;
+            rv.Weights[(int)traitIndex.lockpick] = 5;
 
-            rv.Weights["assessperson"] = 1;
-            rv.Weights["deception"] = 1;
-            rv.Weights["assesscreature"] = 1;
+            rv.Weights[(int)traitIndex.assessperson] = 1;
+            rv.Weights[(int)traitIndex.deception] = 1;
+            rv.Weights[(int)traitIndex.assesscreature] = 1;
 
             return rv;
         }
 
 
-        internal void SetWeight(string trait, int weight)
-        {
-            if (GameConstants.SkillData.Any(x => x.Name == trait) || GameConstants.NonSkillTraits.Any(x => x == trait))
-            {
-                Weights[trait] = weight;
-            }
-            else
-            {
-                Util.WriteToChat($"Unable to set weight for unknown trait: {trait}");
-            }
-        }
+        //internal void SetWeight(string trait, int weight)
+        //{
+        //    if (GameConstants.SkillData.Any(x => x.Name == trait) || GameConstants.NonSkillTraits.Any(x => x == trait))
+        //    {
+        //        Weights[trait] = weight;
+        //    }
+        //    else
+        //    {
+        //        Util.WriteToChat($"Unable to set weight for unknown trait: {trait}");
+        //    }
+        //}
     }
 }

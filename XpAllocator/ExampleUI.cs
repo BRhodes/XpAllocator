@@ -3,6 +3,7 @@ using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Reflection.Emit;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
 
@@ -75,38 +76,11 @@ namespace XpAllocator
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(1);
                 ImGui.InputText("max res.", ref d, 50);
-
                 ImGui.EndTable();
-                if (ImGui.CollapsingHeader("Attributes"))
-                {
-                    ImGui.BeginTable("aa#att", 4);
-                    ImGui.TableNextRow();
-                    ImGui.TableSetColumnIndex(0);
-                    ImGui.Text("Attribute");
-                    ImGui.TableSetColumnIndex(1);
-                    ImGui.Text($"Config Weight");
-                    ImGui.TableSetColumnIndex(2);
-                    ImGui.Text($"Eff. Weight");
-                    ImGui.TableSetColumnIndex(3);
-                    ImGui.Text($"Total XP");
+                BuildCollapsingHeader("Attributes", PlayerConfiguration.traitIndex.strength, PlayerConfiguration.traitIndex.self);
+                BuildCollapsingHeader("Vitals", PlayerConfiguration.traitIndex.health, PlayerConfiguration.traitIndex.mana);
+                BuildCollapsingHeader("Skills", PlayerConfiguration.traitIndex.voidmagic, PlayerConfiguration.traitIndex.assesscreature);
 
-
-                    steve("strength", ref ints[0]);
-                    steve("endurance", ref intss[1]);
-                    steve("coordination", ref intss[2]);
-                    steve("quickness", ref ints[3]);
-                    steve("focus", ref ints[4]);
-                    steve("self", ref ints[5]);
-
-
-
-
-
-                    ImGui.EndTable();
-                }
-                ImGui.CollapsingHeader("Vitals");
-                ImGui.CollapsingHeader("Skills");
-              
                 ImGui.InputTextMultiline("b#Test Txxt", ref TestText, 5000, new Vector2(400, 150));
 
                 if (ImGui.Button("b#Print Test Text"))
@@ -129,13 +103,36 @@ namespace XpAllocator
             }
         }
 
-        void steve(string label, ref int x)
+        private void BuildCollapsingHeader(string label, PlayerConfiguration.traitIndex start, PlayerConfiguration.traitIndex end)
         {
+            if (ImGui.CollapsingHeader(label))
+            {
+                ImGui.BeginTable($"##{label}", 4);
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text("Attribute");
+                ImGui.TableSetColumnIndex(1);
+                ImGui.Text($"Config Weight");
+                ImGui.TableSetColumnIndex(2);
+                ImGui.Text($"Eff. Weight");
+                ImGui.TableSetColumnIndex(3);
+                ImGui.Text($"Total XP");
+
+                for (var i = start; i <= end; i++)
+                    BuildTraitRow(i);
+                ImGui.EndTable();
+            }
+        }
+
+        void BuildTraitRow(PlayerConfiguration.traitIndex trait)
+        {
+            var label = trait.ToString();
+
             ImGui.TableNextRow();
             ImGui.TableSetColumnIndex(0);
             ImGui.Text(label);
             ImGui.TableSetColumnIndex(1);
-            ImGui.InputInt("##" + label , ref x);
+            ImGui.InputInt($"##{label}", ref Globals.Config.Weights[(int)trait]);
             ImGui.TableSetColumnIndex(2);
             ImGui.Text($"1");
             ImGui.TableSetColumnIndex(3);
