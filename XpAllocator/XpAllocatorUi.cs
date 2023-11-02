@@ -33,6 +33,8 @@ namespace XpAllocator
             try
             {
                 if (Globals.Config == null) return;
+
+                // size/position the window (or save that info)
                 if (Globals.Config.PositionSet)
                 {
                     Globals.Config.Size = ImGui.GetWindowSize();
@@ -44,6 +46,7 @@ namespace XpAllocator
                     ImGui.SetWindowPos(Globals.Config.Pos);
                     Globals.Config.PositionSet = true;
                 }
+
                 ImGui.BeginTable("TopLevelConfig", 2);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -77,7 +80,6 @@ namespace XpAllocator
             }
         }
 
-        int index = 0;
         private void BuildCollapsingHeader(string label, PlayerConfiguration.traitIndex start, PlayerConfiguration.traitIndex end)
         {
             if (ImGui.CollapsingHeader(label))
@@ -111,9 +113,9 @@ namespace XpAllocator
             ImGui.InputInt($"##{label}", ref Globals.Config.Weights[(int)trait]);
             ImGui.PopItemWidth();
             ImGui.TableSetColumnIndex(2);
-            ImGui.Text($"{(int)(Globals.XpAllocator._traitManager.traits[trait.ToString()].EffectiveWeight+.5)}");
+            ImGui.Text($"{(int)(Globals.XpAllocator._traitManager.Traits[trait.ToString()].EffectiveWeight+.5)}");
             ImGui.TableSetColumnIndex(3);
-            var currentXp = Globals.XpAllocator._traitManager.traits[trait.ToString()].CurrentXp;
+            var currentXp = Globals.XpAllocator._traitManager.Traits[trait.ToString()].CurrentXp;
             var totalXp = Globals.Core.CharacterFilter.TotalXP;
             ImGui.Text($"{CuteNumbers(currentXp)} ({currentXp*100.0/totalXp:0.#}%%)");
         }

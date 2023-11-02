@@ -77,10 +77,5 @@ namespace XpAllocator
             _inErrorState = false;
             _isRaiseCostCalculated = false;
         }
-
-        internal string Weights()
-        {
-            return _traitManager.DumpWeights();
-        }
     }
 }

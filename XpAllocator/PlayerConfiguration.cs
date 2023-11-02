@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 namespace XpAllocator
@@ -75,8 +72,8 @@ namespace XpAllocator
         {
             var rv = new PlayerConfiguration();
 
-            rv.Enabled = true;
-            rv.Reserve = 100;
+            rv.Enabled = false;
+            rv.Reserve = 0;
             rv.ReserveMax = 4000;
             rv.ReservePercent = 20;
             rv.SkillBasedAttributeWeights = true;

@@ -6,17 +6,17 @@ namespace XpAllocator
 {
     class TraitManager
     {
-        public readonly Dictionary<string, ITrait> traits;
+        public readonly Dictionary<string, ITrait> Traits;
 
         public TraitManager(PlayerConfiguration config)
         {
-            traits = InitializeTraits(config);
+            Traits = InitializeTraits(config);
         }
 
         public long ExpectedRaiseCost()
         {
-            if (traits.Count == 0) return long.MaxValue;
-            var orderedTraits = traits.OrderBy(x => x.Value.AllocationWeight());
+            if (Traits.Count == 0) return long.MaxValue;
+            var orderedTraits = Traits.OrderBy(x => x.Value.AllocationWeight());
             var traitToRaise = orderedTraits.First().Value;
 
             return traitToRaise.RaiseCost();
@@ -24,8 +24,8 @@ namespace XpAllocator
 
         public RaiseAttempt RaiseTrait()
         {
-            if (traits.Count == 0) return null;
-            var orderedTraits = traits.OrderBy(x => x.Value.AllocationWeight());
+            if (Traits.Count == 0) return null;
+            var orderedTraits = Traits.OrderBy(x => x.Value.AllocationWeight());
             var traitToRaise = orderedTraits.First().Value;
 
             var raiseCost = traitToRaise.RaiseCost();
@@ -110,11 +110,6 @@ namespace XpAllocator
             self.Synergies.Add((rv["mana"], 2));
             
             return rv;
-        }
-
-        internal string DumpWeights()
-        {
-            return string.Join("\n", traits.Select(x => $"{x.Key}: {x.Value.EffectiveWeight}"));
         }
     }
 }
