@@ -1,4 +1,5 @@
 ﻿using System;
+using UtilityBelt.Common.Messages.Events;
 
 namespace XpAllocator
 {
@@ -19,10 +20,13 @@ namespace XpAllocator
         {
             _config = config;
             Reset();
+            Util.WriteToChat(config == null ? "No config" : "Config loaded");
         }
 
         internal void AllocateXp(bool skillRaiseSuccess = false)
         {
+            if (_config == null) return;
+
             if (skillRaiseSuccess) _lastRaiseAttempt = null;
 
             if (_lastRaiseAttempt != null && _runTimeout > DateTime.UtcNow)
@@ -34,7 +38,6 @@ namespace XpAllocator
             if (_skillPointCount != Globals.Core.CharacterFilter.SkillPoints)
             {
                 _skillPointCount = Globals.Core.CharacterFilter.SkillPoints;
-                _traitManager = new TraitManager(_config);
                 _isRaiseCostCalculated = false;
             }
 
@@ -56,7 +59,7 @@ namespace XpAllocator
                 _runTimeout = DateTime.UtcNow.AddSeconds(2);
         }
 
-        public long ReservedXp()
+        private long ReservedXp()
         {
             var reserve = _config.Reserve;
             var reservePercent = (long)(_config.ReservePercent * Globals.Core.CharacterFilter.TotalXP);

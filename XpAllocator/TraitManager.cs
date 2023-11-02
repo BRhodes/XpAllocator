@@ -43,92 +43,81 @@ namespace XpAllocator
         {
             var rv = new Dictionary<string, ITrait>();
             //Attributes
-            rv["strength"] = new Attribute(AttributeType.CurrentStrength, _config.Weight("strength"));
-            rv["endurance"] = new Attribute(AttributeType.CurrentEndurance, _config.Weight("endurance"));
-            rv["coordination"] = new Attribute(AttributeType.CurrentCoordination, _config.Weight("coordination"));
-            rv["quickness"] = new Attribute(AttributeType.CurrentQuickness, _config.Weight("quickness"));
-            rv["focus"] = new Attribute(AttributeType.CurrentFocus, _config.Weight("focus"));
-            rv["self"] = new Attribute(AttributeType.CurrentSelf, _config.Weight("self"));
+            rv["strength"] = new Attribute("strength", AttributeType.CurrentStrength);
+            rv["endurance"] = new Attribute("endurance", AttributeType.CurrentEndurance);
+            rv["coordination"] = new Attribute("coordination", AttributeType.CurrentCoordination);
+            rv["quickness"] = new Attribute("quickness", AttributeType.CurrentQuickness);
+            rv["focus"] = new Attribute("focus", AttributeType.CurrentFocus);
+            rv["self"] = new Attribute("self", AttributeType.CurrentSelf);
 
             //Vitals
-            rv["health"] = new Vital(VitalType.MaximumHealth, _config.Weight("health"));
-            rv["stamina"] = new Vital(VitalType.MaximumStamina, _config.Weight("stamina"));
-            rv["mana"] = new Vital(VitalType.MaximumMana, _config.Weight("mana"));
+            rv["health"] = new Vital("health", VitalType.MaximumHealth);
+            rv["stamina"] = new Vital("stamina", VitalType.MaximumStamina);
+            rv["mana"] = new Vital("mana", VitalType.MaximumMana);
 
             //Skills
-            rv["alchemy"] = new Skill(SkillType.CurrentAlchemySkill, _config.Weight("alchemy"));
-            rv["arcanelore"] = new Skill(SkillType.CurrentArcaneLore, _config.Weight("arcanelore"));
-            rv["armortinkering"] = new Skill(SkillType.CurrentArmorTinkering, _config.Weight("armortinkering"));
-            rv["assesscreature"] = new Skill(SkillType.CurrentAssessCreature, _config.Weight("assesscreature"));
-            rv["assessperson"] = new Skill(SkillType.CurrentAssessPerson, _config.Weight("assessperson"));
-            rv["cooking"] = new Skill(SkillType.CurrentCookingSkill, _config.Weight("cooking"));
-            rv["creatureenchantment"] = new Skill(SkillType.CurrentCreatureEnchantment, _config.Weight("creatureenchantment"));
-            rv["deception"] = new Skill(SkillType.CurrentDeception, _config.Weight("deception"));
-            rv["dirtyfighting"] = new Skill(SkillType.CurrentDirtyFighting, _config.Weight("dirtyfighting"));
-            rv["dualwield"] = new Skill(SkillType.CurrentDualWield, _config.Weight("dualwield"));
-            rv["finesseweapons"] = new Skill(SkillType.CurrentFinesseWeapons, _config.Weight("finesseweapons"));
-            rv["fletching"] = new Skill(SkillType.CurrentFletchingSkill, _config.Weight("fletching"));
-            rv["healing"] = new Skill(SkillType.CurrentHealing, _config.Weight("healing"));
-            rv["heavyweapons"] = new Skill(SkillType.CurrentHeavyWeapons, _config.Weight("heavyweapons"));
-            rv["itemenchantment"] = new Skill(SkillType.CurrentItemEnchantment, _config.Weight("itemenchantment"));
-            rv["itemtinkering"] = new Skill(SkillType.CurrentItemTinkering, _config.Weight("itemtinkering"));
-            rv["jump"] = new Skill(SkillType.CurrentJump, _config.Weight("jump"));
-            rv["leadership"] = new Skill(SkillType.CurrentLeadership, _config.Weight("leadership"));
-            rv["lifemagic"] = new Skill(SkillType.CurrentLifeMagic, _config.Weight("lifemagic"));
-            rv["lightweapons"] = new Skill(SkillType.CurrentLightWeapons, _config.Weight("lightweapons"));
-            rv["lockpick"] = new Skill(SkillType.CurrentLockpick, _config.Weight("lockpick"));
-            rv["loyalty"] = new Skill(SkillType.CurrentLoyalty, _config.Weight("loyalty"));
-            rv["magicdefense"] = new Skill(SkillType.CurrentMagicDefense, _config.Weight("magicdefense"));
-            rv["magicitemtinkering"] = new Skill(SkillType.CurrentMagicItemTinkering, _config.Weight("magicitemtinkering"));
-            rv["manaconversion"] = new Skill(SkillType.CurrentManaConversion, _config.Weight("manaconversion"));
-            rv["meleedefense"] = new Skill(SkillType.CurrentMeleeDefense, _config.Weight("meleedefense"));
-            rv["missiledefense"] = new Skill(SkillType.CurrentMissileDefense, _config.Weight("missiledefense"));
-            rv["missileweapons"] = new Skill(SkillType.CurrentMissileWeapons, _config.Weight("missileweapons"));
-            rv["recklessness"] = new Skill(SkillType.CurrentRecklessness, _config.Weight("recklessness"));
-            rv["run"] = new Skill(SkillType.CurrentRun, _config.Weight("run"));
-            rv["salvaging"] = new Skill(SkillType.CurrentSkillSalvaging, _config.Weight("salvaging"));
-            rv["shield"] = new Skill(SkillType.CurrentShield, _config.Weight("shield"));
-            rv["sneakattack"] = new Skill(SkillType.CurrentSneakAttack, _config.Weight("sneakattack"));
-            rv["summoning"] = new Skill(SkillType.CurrentSummoning, _config.Weight("summoning"));
-            rv["twohandedcombat"] = new Skill(SkillType.CurrentTwoHandedCombat, _config.Weight("twohandedcombat"));
-            rv["voidmagic"] = new Skill(SkillType.CurrentVoidMagic, _config.Weight("voidmagic"));
-            rv["warmagic"] = new Skill(SkillType.CurrentWarMagic, _config.Weight("warmagic"));
-            rv["weapontinkering"] = new Skill(SkillType.CurrentWeaponTinkering, _config.Weight("weapontinkering"));
+            rv["alchemy"] = new Skill("alchemy", SkillType.CurrentAlchemySkill);
+            rv["arcanelore"] = new Skill("arcanelore", SkillType.CurrentArcaneLore);
+            rv["armortinkering"] = new Skill("armortinkering", SkillType.CurrentArmorTinkering);
+            rv["assesscreature"] = new Skill("assesscreature", SkillType.CurrentAssessCreature);
+            rv["assessperson"] = new Skill("assessperson", SkillType.CurrentAssessPerson);
+            rv["cooking"] = new Skill("cooking", SkillType.CurrentCookingSkill);
+            rv["creatureenchantment"] = new Skill("creatureenchantment", SkillType.CurrentCreatureEnchantment);
+            rv["deception"] = new Skill("deception", SkillType.CurrentDeception);
+            rv["dirtyfighting"] = new Skill("dirtyfighting", SkillType.CurrentDirtyFighting);
+            rv["dualwield"] = new Skill("dualwield", SkillType.CurrentDualWield);
+            rv["finesseweapons"] = new Skill("finesseweapons", SkillType.CurrentFinesseWeapons);
+            rv["fletching"] = new Skill("fletching", SkillType.CurrentFletchingSkill);
+            rv["healing"] = new Skill("healing", SkillType.CurrentHealing);
+            rv["heavyweapons"] = new Skill("heavyweapons", SkillType.CurrentHeavyWeapons);
+            rv["itemenchantment"] = new Skill("itemenchantment", SkillType.CurrentItemEnchantment);
+            rv["itemtinkering"] = new Skill("itemtinkering", SkillType.CurrentItemTinkering);
+            rv["jump"] = new Skill("jump", SkillType.CurrentJump);
+            rv["leadership"] = new Skill("leadership", SkillType.CurrentLeadership);
+            rv["lifemagic"] = new Skill("lifemagic", SkillType.CurrentLifeMagic);
+            rv["lightweapons"] = new Skill("lightweapons", SkillType.CurrentLightWeapons);
+            rv["lockpick"] = new Skill("lockpick", SkillType.CurrentLockpick);
+            rv["loyalty"] = new Skill("loyalty", SkillType.CurrentLoyalty);
+            rv["magicdefense"] = new Skill("magicdefense", SkillType.CurrentMagicDefense);
+            rv["magicitemtinkering"] = new Skill("magicitemtinkering", SkillType.CurrentMagicItemTinkering);
+            rv["manaconversion"] = new Skill("manaconversion", SkillType.CurrentManaConversion);
+            rv["meleedefense"] = new Skill("meleedefense", SkillType.CurrentMeleeDefense);
+            rv["missiledefense"] = new Skill("missiledefense", SkillType.CurrentMissileDefense);
+            rv["missileweapons"] = new Skill("missileweapons", SkillType.CurrentMissileWeapons);
+            rv["recklessness"] = new Skill("recklessness", SkillType.CurrentRecklessness);
+            rv["run"] = new Skill("run", SkillType.CurrentRun);
+            rv["salvaging"] = new Skill("salvaging", SkillType.CurrentSkillSalvaging);
+            rv["shield"] = new Skill("shield", SkillType.CurrentShield);
+            rv["sneakattack"] = new Skill("sneakattack", SkillType.CurrentSneakAttack);
+            rv["summoning"] = new Skill("summoning", SkillType.CurrentSummoning);
+            rv["twohandedcombat"] = new Skill("twohandedcombat", SkillType.CurrentTwoHandedCombat);
+            rv["voidmagic"] = new Skill("voidmagic", SkillType.CurrentVoidMagic);
+            rv["warmagic"] = new Skill("warmagic", SkillType.CurrentWarMagic);
+            rv["weapontinkering"] = new Skill("weapontinkering", SkillType.CurrentWeaponTinkering);
 
-            if (_config.SkillBasedAttributeWeights)
+
+            foreach (var synergy in GameConstants.SkillData)
             {
-                foreach (var synergy in GameConstants.SkillData)
+                foreach (var attribute in synergy.SynergyAttributes)
                 {
-                    foreach (var attribute in synergy.SynergyAttributes)
-                    {
-                        var syn = rv[synergy.Name] as Skill;
-                        if (syn != null && syn.TrainLevel >= 2)
-                        {
-                            rv[attribute].Weight += rv[synergy.Name].Weight / synergy.SynergyRatio;
-                        }
-                    }
-                }
-
-                rv["endurance"].Weight += rv["health"].Weight / 2;
-                rv["endurance"].Weight += rv["stamina"].Weight;
-                rv["self"].Weight += rv["mana"].Weight;
-            }
-
-            var traitKvps = rv.ToList();
-            foreach (var traitKvp in traitKvps)
-            {
-                if (!traitKvp.Value.CanBeRaised())
-                {
-                    rv.Remove(traitKvp.Key);
+                    var attTrait = rv[attribute] as Attribute;
+                    attTrait.Synergies.Add((rv[synergy.Name], synergy.SynergyRatio));
                 }
             }
 
+            var end = rv["endurance"] as Attribute;
+            end.Synergies.Add((rv["health"], 2));
+            end.Synergies.Add((rv["stamina"], 2));
+
+            var self = rv["self"] as Attribute;
+            self.Synergies.Add((rv["mana"], 2));
+            
             return rv;
         }
 
         internal string DumpWeights()
         {
-            return string.Join("\n", traits.Select(x => $"{x.Key}: {x.Value.Weight}"));
+            return string.Join("\n", traits.Select(x => $"{x.Key}: {x.Value.EffectiveWeight}"));
         }
     }
 }

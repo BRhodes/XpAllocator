@@ -2,7 +2,7 @@
 {
     internal interface ITrait
     {
-        double Weight { get; set; }
+        int Weight { get; }
         double EffectiveWeight { get; }
 
         long RaiseCost();

@@ -1,6 +1,7 @@
 ﻿using Decal.Adapter;
 using ImGuiNET;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using UtilityBelt.Service;
 using UtilityBelt.Service.Views;
@@ -48,11 +49,16 @@ namespace XpAllocator
         /// <summary>
         /// Called every time the ui is redrawing.
         /// </summary>
-        static int x = 0;
+        static int x = 0; 
+
+        int[] ints = { 1, 2, 3, 4, 5, 6 };
+        List<int> intss = new List<int>() { 1, 2, 3, 4, 5, 6 };
+
         private void Hud_OnRender(object sender, EventArgs e)
         {
             try
             {
+                if (Globals.Config == null) return;
                 bool enabled = Globals.Config.Enabled;
 
                 ImGui.BeginTable("TopLevelConfig", 2);
@@ -84,16 +90,18 @@ namespace XpAllocator
                     ImGui.TableSetColumnIndex(3);
                     ImGui.Text($"Total XP");
 
-                    for (int i = 0; i < 6; i++)
-                    {
-                        ImGui.TableNextRow();
-                        ImGui.TableSetColumnIndex(0);
-                        ImGui.Text("strength");
-                        ImGui.TableSetColumnIndex(1);
-                        ImGui.Text($"{0.1}");
-                        ImGui.TableSetColumnIndex(2);
-                        ImGui.Text($"{x++}");
-                    }
+
+                    steve("strength", ref ints[0]);
+                    steve("endurance", ref intss[1]);
+                    steve("coordination", ref intss[2]);
+                    steve("quickness", ref ints[3]);
+                    steve("focus", ref ints[4]);
+                    steve("self", ref ints[5]);
+
+
+
+
+
                     ImGui.EndTable();
                 }
                 ImGui.CollapsingHeader("Vitals");
@@ -119,6 +127,19 @@ namespace XpAllocator
             {
                 PluginCore.Log(ex);
             }
+        }
+
+        void steve(string label, ref int x)
+        {
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text(label);
+            ImGui.TableSetColumnIndex(1);
+            ImGui.InputInt("##" + label , ref x);
+            ImGui.TableSetColumnIndex(2);
+            ImGui.Text($"1");
+            ImGui.TableSetColumnIndex(3);
+            ImGui.Text($"0");
         }
 
         /// <summary>

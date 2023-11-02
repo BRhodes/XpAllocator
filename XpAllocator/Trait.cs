@@ -1,83 +1,94 @@
-﻿using Decal.Adapter.Wrappers;
+﻿using ACE.DatLoader.FileTypes;
+using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Text;
+using System.Linq;
+using UtilityBelt.Service.Lib.Settings;
 
 namespace XpAllocator
 {
     internal class Attribute : Trait<AttributeType>
     {
-        public Attribute(AttributeType attribute, double weight) : base(attribute, weight)
+        protected override IList<long> XpTable => GameConstants.AttributeXpTable;
+        public List<(ITrait, int)> Synergies = new();
+        public override double EffectiveWeight => Weight + Synergies.Sum(x => x.Item1.EffectiveWeight / x.Item2);
+
+        public Attribute(string name, AttributeType decalName) : base(name, decalName)
         {
-            XpTable = GameConstants.AttributeXpTable;
             LevelHook = Globals.Core.Actions.AttributeClicks;
             TotalXpHook = Globals.Core.Actions.AttributeTotalXP;
-            RaiseTraitDelegate = (x) => Globals.Core.Actions.AddAttributeExperience(attribute, x);
+            RaiseTraitDelegate = (x) => Globals.Core.Actions.AddAttributeExperience(decalName, x);
         }
     }
 
     internal class Vital : Trait<VitalType>
     {
-        public Vital(VitalType vital, double weight) : base(vital, weight)
+        protected override IList<long> XpTable => GameConstants.VitalXpTable;
+
+        public Vital(string name, VitalType decalName) : base(name, decalName)
         {
-            XpTable = GameConstants.VitalXpTable;
             LevelHook = Globals.Core.Actions.VitalClicks;
             TotalXpHook = Globals.Core.Actions.VitalTotalXP;
-            RaiseTraitDelegate = (x) => Globals.Core.Actions.AddVitalExperience(vital, x);
+            RaiseTraitDelegate = (x) => Globals.Core.Actions.AddVitalExperience(decalName, x);
         }
     }
+
     internal class Skill : Trait<SkillType>
     {
-        public int TrainLevel { get; private set; }
+        protected override IList<long> XpTable
+        { 
+            get
+            {
+                return TrainLevel switch
+                {
+                    // specialized
+                    3 => GameConstants.SpecSkillXpTable,
+                    // trained
+                    2 => GameConstants.TrainedSkillXpTable,
+                    _ => null,
+                };
+            }
+        }
 
-        public Skill(SkillType skill, double weight) : base(skill, weight)
+        public int TrainLevel => Globals.Core.Actions.SkillTrainLevel[_decalName];
+
+        public Skill(string name, SkillType decalName) : base(name, decalName)
         {
             LevelHook = Globals.Core.Actions.SkillClicks;
             TotalXpHook = Globals.Core.Actions.SkillTotalXP;
-            RaiseTraitDelegate = (x) => Globals.Core.Actions.AddSkillExperience(skill, x);
-
-            TrainLevel = Globals.Core.Actions.SkillTrainLevel[skill];
-            switch (TrainLevel)
-            {
-                case 3: // specialized
-                    XpTable = GameConstants.SpecSkillXpTable;
-                    break;
-                case 2: // trained
-                    XpTable = GameConstants.TrainedSkillXpTable;
-                    break;
-                default:
-                    XpTable = null;
-                    break;
-            }
+            RaiseTraitDelegate = (x) => Globals.Core.Actions.AddSkillExperience(decalName, x);
         }
     }
 
-    internal class Trait<T> : ITrait where T: struct, IConvertible
+    abstract internal class Trait<TraitEnum> : ITrait where TraitEnum: struct, IConvertible
     {
-        readonly T _trait;
+        protected readonly TraitEnum _decalName;
+        readonly string _name;
         private int MaxLevel => XpTable.Count - 1;
-        protected IList<long> XpTable;
 
-        protected HookIndexer<T> LevelHook;
-        virtual protected int CurrentLevel => LevelHook[_trait];
+        abstract protected IList<long> XpTable { get; }
 
-        protected HookIndexer<T> TotalXpHook;
-        int CurrentXp => TotalXpHook[_trait];
+        protected HookIndexer<TraitEnum> LevelHook;
+        virtual protected int CurrentLevel => LevelHook[_decalName];
+
+        protected HookIndexer<TraitEnum> TotalXpHook;
+        int CurrentXp => TotalXpHook[_decalName];
         public Action<int> RaiseTraitDelegate { get; set; }
 
-        public double Weight { get; set; }
+        public int Weight => Globals.Config.Weights[_name];
 
-        public virtual double EffectiveWeight => Weight;
+        public virtual double EffectiveWeight => CanBeRaised() ? Weight : 0;
 
         public double AllocationWeight()
         {
-            return Weight == 0 ? double.MaxValue : RaiseCost() / Weight;
+            return Weight == 0 ? double.MaxValue : RaiseCost() / (double) Weight;
         }
 
-        public Trait(T trait, double weight)
+        public Trait(string name, TraitEnum decalName)
         {
-            _trait = trait;
-            Weight = weight;
+            _decalName = decalName;
+            _name = name;
         }
 
         public long RaiseCost()
@@ -92,11 +103,11 @@ namespace XpAllocator
         public RaiseAttempt Raise()
         {
             var raiseCost = RaiseCost();
-            RaiseAttempt raiseAttempt = new RaiseAttempt();
+            RaiseAttempt raiseAttempt = new();
 
             if (Globals.Core.CharacterFilter.UnassignedXP > raiseCost && raiseCost > 0)
             {
-                raiseAttempt.Trait = _trait.ToString();
+                raiseAttempt.Trait = _decalName.ToString();
                 raiseAttempt.XpAllocated = raiseCost;
 
                 RaiseTraitDelegate((int)raiseCost);
@@ -108,7 +119,7 @@ namespace XpAllocator
 
         public bool CanBeRaised()
         {
-            return XpTable != null && CurrentLevel < MaxLevel && Weight > 0;
+            return XpTable != null && CurrentLevel < MaxLevel;
         }
     }
 }
