@@ -4,10 +4,10 @@
     {
         int Weight { get; }
         double EffectiveWeight { get; }
+        long CurrentXp { get; }
 
         long RaiseCost();
         RaiseAttempt Raise();
-        bool CanBeRaised();
         double AllocationWeight();
     }
 }

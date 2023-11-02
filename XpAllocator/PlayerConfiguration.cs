@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace XpAllocator
 {
@@ -17,76 +19,71 @@ namespace XpAllocator
             health,
             stamina,
             mana,
-            voidmagic,
-            heavyweapons,
-            lightweapons,
+            alchemy,
+            arcanelore,
+            armortinkering,
+            assesscreature,
+            assessperson,
+            cooking,
+            creatureenchantment,
+            deception,
+            dirtyfighting,
+            dualwield,
             finesseweapons,
-            missileweapons,
-            warmagic,
-            twohandedcombat,
-            summoning,
+            fletching,
+            healing,
+            heavyweapons,
+            itemenchantment,
+            itemtinkering,
+            jump,
+            leadership,
+            lifemagic,
+            lightweapons,
+            lockpick,
+            loyalty,
+            magicdefense,
+            magicitemtinkering,
+            manaconversion,
             meleedefense,
             missiledefense,
-            magicdefense,
-            creatureenchantment,
-            itemenchantment,
-            lifemagic,
-            manaconversion,
-            run,
-            jump,
-            arcanelore,
-            healing,
-            shield,
-            dualwield,
+            missileweapons,
             recklessness,
-            sneakattack,
-            dirtyfighting,
-            leadership,
-            loyalty,
+            run,
             salvaging,
-            itemtinkering,
+            shield,
+            sneakattack,
+            summoning,
+            twohandedcombat,
+            voidmagic,
+            warmagic,
             weapontinkering,
-            armortinkering,
-            magicitemtinkering,
-            fletching,
-            alchemy,
-            cooking,
-            lockpick,
-            assessperson,
-            deception,
-            assesscreature,
         }
 
-
-        public bool Enabled { get; set; }
-
-        public long Reserve { get; set; }
-
-        public double ReservePercent { get; set; }
-
-        public bool SkillBasedAttributeWeights { get; set; }
-
-        public long ReserveMax { get; set; }
-
+        public bool Enabled;
+        public bool SkillBasedAttributeWeights;
+        public int ReservePercent;
+        public int Reserve;
+        public int ReserveMax;
         public int[] Weights { get; set; }
+        public Vector2 Size { get; set; }
+        public Vector2 Pos { get; set; }
 
-        public double Weight(string key)
-        {
-            key = key.ToLower();
-            return Weights[(int)Enum.Parse(typeof(traitIndex), key)];
-        }
+        [JsonIgnore]
+        public bool PositionSet { get; set; } = false;
 
         static public PlayerConfiguration Defaults()
         {
             var rv = new PlayerConfiguration();
 
             rv.Enabled = true;
-            rv.Reserve = 0;
-            rv.ReserveMax = 4000000000;
-            rv.ReservePercent = .2;
+            rv.Reserve = 100;
+            rv.ReserveMax = 4000;
+            rv.ReservePercent = 20;
             rv.SkillBasedAttributeWeights = true;
+            rv.Size = new Vector2(400, 400);
+            rv.Pos = new Vector2(200, 120);
 
-            rv.Weights = new int[(int)traitIndex.assesscreature+1];
+            rv.Weights = new int[(int)traitIndex.weapontinkering+1];
 
             // attributes
             rv.Weights[(int)traitIndex.strength] = 20;
@@ -103,9 +100,9 @@ namespace XpAllocator
 
             // primary attacks
             rv.Weights[(int)traitIndex.voidmagic] = 100;
-            rv.Weights[(int)traitIndex.heavyweapons] = 100;
             rv.Weights[(int)traitIndex.lightweapons] = 100;
             rv.Weights[(int)traitIndex.finesseweapons] = 100;
+            rv.Weights[(int)traitIndex.heavyweapons] = 100;
             rv.Weights[(int)traitIndex.missileweapons] = 100;
             rv.Weights[(int)traitIndex.warmagic] = 100;
             rv.Weights[(int)traitIndex.twohandedcombat] = 100;
@@ -158,18 +155,5 @@ namespace XpAllocator
 
             return rv;
         }
-
-
-        //internal void SetWeight(string trait, int weight)
-        //{
-        //    if (GameConstants.SkillData.Any(x => x.Name == trait) || GameConstants.NonSkillTraits.Any(x => x == trait))
-        //    {
-        //        Weights[trait] = weight;
-        //    }
-        //    else
-        //    {
-        //        Util.WriteToChat($"Unable to set weight for unknown trait: {trait}");
-        //    }
-        //}
     }
 }

@@ -6,7 +6,7 @@ namespace XpAllocator
 {
     class TraitManager
     {
-        private readonly Dictionary<string, ITrait> traits;
+        public readonly Dictionary<string, ITrait> traits;
 
         public TraitManager(PlayerConfiguration config)
         {
@@ -18,9 +18,6 @@ namespace XpAllocator
             if (traits.Count == 0) return long.MaxValue;
             var orderedTraits = traits.OrderBy(x => x.Value.AllocationWeight());
             var traitToRaise = orderedTraits.First().Value;
-
-            //var pruneCandidate = orderedTraits.Last();
-            //if (!pruneCandidate.Value.CanBeRaised()) traits.Remove(pruneCandidate.Key);
 
             return traitToRaise.RaiseCost();
         }

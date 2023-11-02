@@ -14,7 +14,7 @@ namespace XpAllocator
     {
         protected override IList<long> XpTable => GameConstants.AttributeXpTable;
         public List<(ITrait, int)> Synergies = new();
-        public override double EffectiveWeight => Weight + Synergies.Sum(x => x.Item1.EffectiveWeight / x.Item2);
+        public override double EffectiveWeight => Weight + (Globals.Config.SkillBasedAttributeWeights ? Synergies.Sum(x => x.Item1.EffectiveWeight / x.Item2) : 0);
 
         public Attribute(string name, AttributeType decalName) : base(name, decalName)
         {
@@ -75,16 +75,16 @@ namespace XpAllocator
         virtual protected int CurrentLevel => LevelHook[_decalName];
 
         protected HookIndexer<TraitEnum> TotalXpHook;
-        int CurrentXp => TotalXpHook[_decalName];
+        public long CurrentXp => (uint)TotalXpHook[_decalName];
         public Action<int> RaiseTraitDelegate { get; set; }
 
         public int Weight => Globals.Config.Weights[(int)Enum.Parse(typeof(traitIndex), _name)];
 
-        public virtual double EffectiveWeight => CanBeRaised() ? Weight : 0;
+        public virtual double EffectiveWeight => XpTable != null ? Weight : 0;
 
         public double AllocationWeight()
         {
-            return Weight == 0 ? double.MaxValue : RaiseCost() / (double) Weight;
+            return EffectiveWeight <= 0 ? double.MaxValue : RaiseCost() / (double)EffectiveWeight;
         }
 
         public Trait(string name, TraitEnum decalName)
@@ -95,7 +95,7 @@ namespace XpAllocator
 
         public long RaiseCost()
         {
-            if (!CanBeRaised()) return long.MaxValue;
+            if (!(XpTable != null && CurrentLevel < MaxLevel)) return long.MaxValue;
             long expAtNextLevel = XpTable[CurrentLevel + 1];
             var cost = (int)(expAtNextLevel - CurrentXp);
 
@@ -117,11 +117,6 @@ namespace XpAllocator
                 return raiseAttempt;
             }
             return null;
-        }
-
-        public bool CanBeRaised()
-        {
-            return XpTable != null && CurrentLevel < MaxLevel;
         }
     }
 }

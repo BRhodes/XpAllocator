@@ -1,5 +1,6 @@
 ﻿using Decal.Adapter;
 using Decal.Adapter.Wrappers;
+using ImGuiNET;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,10 @@ namespace XpAllocator
     [FriendlyName("XpAllocator")]
     public class PluginCore : PluginBase
     {
-        private ExampleUI ui;
+        private XpAllocatorUi ui;
         private readonly Regex SkillRaiseRegex = new Regex(@"^Your .* is now \d+");
 
-
+        string configPath = null;
 
         /// <summary>
         /// Assembly directory containing the plugin dll
@@ -47,8 +48,6 @@ namespace XpAllocator
                     // note: if the plugin was reloaded while ingame, this event will never trigger on the newly reloaded instance.
                     CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
                 }
-
-                ui = new ExampleUI();
             }
             catch (Exception ex)
             {
@@ -80,6 +79,7 @@ namespace XpAllocator
             Globals.Core.ChatBoxMessage += ContinueOnSkillRaised;
             Globals.Core.CommandLineText += Core_CommandLineText;
             Globals.XpAllocator = new XpAllocator(LoadConfig());
+            ui = new XpAllocatorUi();
             //Globals.XpAllocator.AllocateXp();
         }
 
@@ -95,6 +95,8 @@ namespace XpAllocator
                 Globals.Core.CharacterFilter.ChangeExperience -= ExperienceFilter_Earned;
                 Globals.Core.ChatBoxMessage -= ContinueOnSkillRaised;
                 Globals.Core.CommandLineText -= Core_CommandLineText;
+
+                SaveConfig();
 
                 // clean up our ui view
                 ui.Dispose();
@@ -115,26 +117,30 @@ namespace XpAllocator
                 var parts = command.Split(' ');
                 var verb = parts.Length > 1 ? parts[1] : null;
 
-                if (verb == "save") SaveConfig();
-                if (verb == "enable") Globals.Config.Enabled = true;
-                if (verb == "disable") Globals.Config.Enabled = false;
-                //if (verb == "reserve") Globals.Config.Reserve = parts[2];
-                if (verb == "set")
+                if (verb == "save")
                 {
-                    if (parts.Length < 4) Util.WriteToChat($"Correct usage is /xpa set <skill> <weight> (i.e. /xpa set run .05");
-                    if (!int.TryParse(parts[3], out var weight)) Util.WriteToChat($"{parts[3]} is not a valid weight");
-
-                    //Globals.Config.SetWeight(parts[2], weight);
-                    Globals.XpAllocator = new XpAllocator(Globals.Config);
+                    SaveConfig();
+                    Util.WriteToChat("Character profile saved!");
                 }
-                if (verb == "weights")
+                else if (verb == "enable")
                 {
-                    Util.WriteToChat($"Current Weightings: \n{Globals.XpAllocator.Weights()}");
+                    Globals.Config.Enabled = true;
+                    Util.WriteToChat("XpAllocator enabled.");
                 }
-                if (verb == "reset")
+                else if (verb == "disable")
                 {
-                    Globals.XpAllocator = new XpAllocator(LoadConfig());
-                    Util.WriteToChat("Reset!");
+                    Globals.Config.Enabled = false;
+                    Util.WriteToChat("XpAllocator disabled.");
+                }
+                else if (verb == "resetpos")
+                {
+                    Globals.Config.Size = new System.Numerics.Vector2(400, 400);
+                    Globals.Config.Pos = new System.Numerics.Vector2(220, 100);
+                    Globals.Config.PositionSet = false;
+                }
+                else
+                {
+                    Util.WriteToChat("Commands are: \nenable - allow the plugin to do stuff\ndisable - turn the plugin off (mostly)\nsave - save the configuration (probably not needed but exists just in case)\nresetpos - incase you lose the window for some reason");
                 }
             }
         }
@@ -159,7 +165,7 @@ namespace XpAllocator
         private PlayerConfiguration LoadConfig()
         {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var configPath = $"{appdata}\\VehnPlugins\\XpAllocator\\{Core.CharacterFilter.Server}\\{Core.CharacterFilter.AccountName}\\{Core.CharacterFilter.Name}.json";
+            configPath = $"{appdata}\\VehnPlugins\\XpAllocator\\{Core.CharacterFilter.Server}\\{Core.CharacterFilter.AccountName}\\{Core.CharacterFilter.Name}.json";
 
             if (!File.Exists(configPath))
             {
@@ -179,9 +185,8 @@ namespace XpAllocator
 
         private void SaveConfig()
         {
-            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var configPath = $"{appdata}\\VehnPlugins\\XpAllocator\\{Core.CharacterFilter.Server}\\{Core.CharacterFilter.AccountName}\\{Core.CharacterFilter.Name}.json";
-
+            if (configPath == null) return;
+            
             if (!File.Exists(configPath))
                 CreateChildDirectories(configPath);
 

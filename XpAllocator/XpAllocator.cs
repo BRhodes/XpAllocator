@@ -6,7 +6,7 @@ namespace XpAllocator
     internal class XpAllocator
     {
         PlayerConfiguration _config { get; set; }
-        TraitManager _traitManager { get; set; }
+        public TraitManager _traitManager { get; set; }
         RaiseAttempt _lastRaiseAttempt { get; set; } = null;
 
         public bool _inErrorState { get; private set; }
@@ -19,8 +19,8 @@ namespace XpAllocator
         public XpAllocator(PlayerConfiguration config)
         {
             _config = config;
+            _traitManager = new TraitManager(_config);
             Reset();
-            Util.WriteToChat(config == null ? "No config" : "Config loaded");
         }
 
         internal void AllocateXp(bool skillRaiseSuccess = false)
@@ -61,20 +61,21 @@ namespace XpAllocator
 
         private long ReservedXp()
         {
-            var reserve = _config.Reserve;
-            var reservePercent = (long)(_config.ReservePercent * Globals.Core.CharacterFilter.TotalXP);
+            var million = 1000000L;
+            var reserve = _config.Reserve * million;
+            var reservePercent = (long)(_config.ReservePercent/100.0 * Globals.Core.CharacterFilter.TotalXP);
 
             reserve = Math.Max(reserve, reservePercent);
-            reserve = Math.Min(reserve, _config.ReserveMax);
+            reserve = Math.Min(reserve, _config.ReserveMax * million);
 
             return reserve;
         }
 
-        void Reset()
+        public void Reset()
         {
             _isRunning = false;
             _inErrorState = false;
-            _traitManager = new TraitManager(_config);
+            _isRaiseCostCalculated = false;
         }
 
         internal string Weights()
